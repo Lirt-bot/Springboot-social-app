@@ -1,4 +1,10 @@
 package se.jensen.linus.springboot1.DTO;
 
-public record UserWithPostsResponseDTO() {
+import java.util.List;
+
+public record UserWithPostsResponseDTO(
+        UserResponseDTO user,
+        List<PostResponseDTO> posts
+) {
 }
+
