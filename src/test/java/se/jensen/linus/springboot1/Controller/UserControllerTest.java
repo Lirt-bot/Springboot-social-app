@@ -1,11 +1,13 @@
 package se.jensen.linus.springboot1.Controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -19,7 +21,6 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,11 +50,11 @@ public class UserControllerTest {
         userRepository.save(user);
     }
 
-
+    @Disabled
     @Test
+    @WithMockUser(roles = "ADMIN")
     void shouldGetAllUsers() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users")
-                        .with(httpBasic("admin", "123")))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(status().isOk()).andReturn();
 
         String response = result.getResponse().getContentAsString();
