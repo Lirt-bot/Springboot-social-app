@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
                 , version = "1.0"),
         security = @SecurityRequirement(name = "bearerAuth")
 )
+
 @SecurityScheme(
         name = "bearerAuth",
         type = SecuritySchemeType.HTTP,
