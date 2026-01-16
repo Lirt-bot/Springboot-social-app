@@ -1,5 +1,7 @@
 package se.jensen.linus.springboot1.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.jensen.linus.springboot1.DTO.PostResponseDTO;
@@ -19,6 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
 
     public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
@@ -31,9 +34,13 @@ public class UserService {
     public UserResponseDTO getUserByUsername(String username) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new NoSuchElementException(
-                                "User not found: " + username));
+                .orElseThrow(() -> {
+                    log.warn("Användare med username '{}' hittades inte", username);
+                    return new NoSuchElementException(
+                            "User not found: " + username);
+
+                });
+        log.debug("Användare hittades: id={}, username={}", user.getId(), user.getUsername());
 
         return userMapper.toDTO(user);
     }
@@ -51,7 +58,7 @@ public class UserService {
         User user = userMapper.fromDto(userDTO);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
+
         boolean exists = userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
         if (exists) {
             throw new IllegalArgumentException("Username or Email already exists!");
